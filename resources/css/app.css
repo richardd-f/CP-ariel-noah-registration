@@ -1,9 +1,251 @@
 @import 'tailwindcss';
 
-@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
-@source '../../storage/framework/views/*.php';
-
 @theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-display: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+    
+    --color-dark-bg: #030303;
+    --color-dark-card: #0a0a0f;
+    --color-neon-purple: #7C3AED;
+    --color-neon-cyan: #06B6D4;
+    --color-neon-pink: #EC4899;
+}
+
+:root {
+    color-scheme: dark;
+}
+
+body {
+    background-color: #030303;
+    color: #f3f4f6;
+    font-family: var(--font-sans);
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+    selection-background-color: #7C3AED;
+    selection-color: #ffffff;
+}
+
+::selection {
+    background-color: rgba(124, 58, 237, 0.4);
+    color: #ffffff;
+}
+
+/* Typography Helpers */
+.font-display {
+    font-family: var(--font-display);
+}
+
+/* Glassmorphism Classes */
+.glass-panel {
+    background: rgba(14, 14, 20, 0.65);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.glass-card {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.015) 100%), rgba(12, 12, 18, 0.7);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+    transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass-card:hover {
+    border-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-4px);
+    box-shadow: 0 30px 70px rgba(0, 0, 0, 0.8), 0 0 30px rgba(124, 58, 237, 0.2);
+}
+
+.glass-input {
+    background: rgba(8, 8, 14, 0.75);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+    transition: all 0.25s ease;
+}
+
+.glass-input:focus {
+    outline: none;
+    border-color: #06B6D4;
+    box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.25), 0 0 25px rgba(6, 182, 212, 0.2);
+    background: rgba(12, 12, 20, 0.9);
+}
+
+/* Aurora & Background Animations */
+@keyframes aurora-float-1 {
+    0%, 100% {
+        transform: translate(0px, 0px) scale(1);
+    }
+    33% {
+        transform: translate(50px, -40px) scale(1.1);
+    }
+    66% {
+        transform: translate(-30px, 30px) scale(0.95);
+    }
+}
+
+@keyframes aurora-float-2 {
+    0%, 100% {
+        transform: translate(0px, 0px) scale(1);
+    }
+    40% {
+        transform: translate(-60px, 50px) scale(1.15);
+    }
+    80% {
+        transform: translate(40px, -30px) scale(0.9);
+    }
+}
+
+@keyframes aurora-float-3 {
+    0%, 100% {
+        transform: translate(0px, 0px) scale(1);
+    }
+    50% {
+        transform: translate(45px, 60px) scale(1.2);
+    }
+}
+
+.animate-aurora-1 {
+    animation: aurora-float-1 20s ease-in-out infinite alternate;
+}
+
+.animate-aurora-2 {
+    animation: aurora-float-2 24s ease-in-out infinite alternate-reverse;
+}
+
+.animate-aurora-3 {
+    animation: aurora-float-3 22s ease-in-out infinite alternate;
+}
+
+/* Vinyl Spin */
+@keyframes vinyl-rotate {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.animate-vinyl {
+    animation: vinyl-rotate 16s linear infinite;
+}
+
+/* Equalizer Bars */
+@keyframes eq-1 {
+    0%, 100% { height: 20%; }
+    50% { height: 95%; }
+}
+@keyframes eq-2 {
+    0%, 100% { height: 75%; }
+    50% { height: 25%; }
+}
+@keyframes eq-3 {
+    0%, 100% { height: 40%; }
+    50% { height: 100%; }
+}
+@keyframes eq-4 {
+    0%, 100% { height: 90%; }
+    50% { height: 35%; }
+}
+@keyframes eq-5 {
+    0%, 100% { height: 30%; }
+    50% { height: 85%; }
+}
+
+.eq-bar-1 { animation: eq-1 0.9s ease-in-out infinite alternate; }
+.eq-bar-2 { animation: eq-2 0.75s ease-in-out infinite alternate; }
+.eq-bar-3 { animation: eq-3 1.1s ease-in-out infinite alternate; }
+.eq-bar-4 { animation: eq-4 0.85s ease-in-out infinite alternate; }
+.eq-bar-5 { animation: eq-5 1.0s ease-in-out infinite alternate; }
+
+/* Pulse Glows */
+@keyframes pulse-glow {
+    0%, 100% {
+        opacity: 0.6;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.9;
+        transform: scale(1.05);
+    }
+}
+
+.animate-pulse-glow {
+    animation: pulse-glow 4s ease-in-out infinite;
+}
+
+/* Neon Glow Gradients */
+.text-neon-gradient {
+    background: linear-gradient(135deg, #EC4899 0%, #7C3AED 50%, #06B6D4 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.text-cyan-gradient {
+    background: linear-gradient(135deg, #06B6D4 0%, #3B82F6 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.text-aurora-gradient {
+    background: linear-gradient(110deg, #FFFFFF 0%, #E9D5FF 30%, #67E8F9 70%, #F472B6 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* Shimmer Button */
+@keyframes shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+.btn-shimmer {
+    background-size: 200% auto;
+    animation: shimmer 4s linear infinite;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+::-webkit-scrollbar-track {
+    background: #030303;
+}
+::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(124, 58, 237, 0.6);
+}
+
+/* Hologram Ticket Effect */
+.hologram-strip {
+    background: linear-gradient(
+        135deg,
+        rgba(236, 72, 153, 0.4) 0%,
+        rgba(124, 58, 237, 0.4) 25%,
+        rgba(6, 182, 212, 0.4) 50%,
+        rgba(16, 185, 129, 0.4) 75%,
+        rgba(236, 72, 153, 0.4) 100%
+    );
+    background-size: 400% 400%;
+    animation: shimmer 6s ease infinite;
+}
+
+/* Grid overlay background */
+.bg-cyber-grid {
+    background-image: 
+        linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
 }
