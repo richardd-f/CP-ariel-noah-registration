@@ -3,12 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreAnonymousRegistrationRequest;
+use App\Mail\RegistrationConfirmation;
 use App\Models\AnonymousRegistration;
 use App\Services\TicketService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\View\View;
+use Throwable;
 
 class RegistrationController extends Controller
 {
@@ -26,7 +28,7 @@ class RegistrationController extends Controller
         $referralSources = $this->ticketService->getReferralSources();
         $ageRanges = $this->ticketService->getAgeRanges();
         $countries = $this->ticketService->getCountries();
-        
+
         $totalRegistrations = AnonymousRegistration::count();
 
         return view('concert.index', compact(
@@ -44,9 +46,6 @@ class RegistrationController extends Controller
      */
     public function store(StoreAnonymousRegistrationRequest $request): JsonResponse|RedirectResponse
     {
-        // 1.5s simulated network/crypto-hash processing for realistic feedback
-        usleep(1200000);
-
         $validated = $request->validated();
         $ticketId = $this->ticketService->generateUniqueTicketId();
 
@@ -75,16 +74,31 @@ class RegistrationController extends Controller
             'download_url' => route('ticket.download', $registration->anonymous_ticket_id),
         ];
 
+        $emailSent = false;
+
+        try {
+            Mail::to($validated['email'])->send(new RegistrationConfirmation($ticketPayload));
+            $emailSent = true;
+        } catch (Throwable $exception) {
+            report($exception);
+        }
+
+        $message = $emailSent
+            ? 'Your reservation is confirmed. A confirmation email has been sent. Please check your inbox or spam folder.'
+            : 'Your reservation is confirmed, but we could not send the confirmation email. Please save your ticket now.';
+
         if ($request->expectsJson() || $request->ajax()) {
             return response()->json([
                 'success' => true,
-                'message' => 'Your anonymous reservation has been received.',
+                'message' => $message,
+                'email_sent' => $emailSent,
                 'ticket' => $ticketPayload,
             ], 201);
         }
 
         return redirect()->route('home', ['#success'])
-            ->with('success_ticket', $ticketPayload);
+            ->with('success_ticket', $ticketPayload)
+            ->with('success_message', $message);
     }
 
     /**

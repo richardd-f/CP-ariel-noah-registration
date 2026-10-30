@@ -52,6 +52,7 @@ function initTiltCards() {
 // Registration Form Store & State for Alpine
 Alpine.data('registrationApp', (initialData = {}) => ({
     // Form fields
+    email: initialData.oldEmail || '',
     nickname: initialData.oldNickname || '',
     ageRange: initialData.oldAgeRange || '',
     country: initialData.oldCountry || '',
@@ -65,6 +66,7 @@ Alpine.data('registrationApp', (initialData = {}) => ({
     submitProgress: 0,
     errors: initialData.errors || {},
     showSuccessModal: !!initialData.successTicket,
+    successMessage: initialData.successMessage || '',
     ticket: initialData.successTicket || null,
     qrDataUrl: '',
     isPlayingMusic: false,
@@ -95,6 +97,9 @@ Alpine.data('registrationApp', (initialData = {}) => ({
     validate() {
         this.errors = {};
 
+        if (!this.email.trim()) {
+            this.errors.email = 'Please enter your email address for the confirmation.';
+        }
         if (!this.ageRange) {
             this.errors.age_range = 'Please select your age category.';
         }
@@ -105,13 +110,15 @@ Alpine.data('registrationApp', (initialData = {}) => ({
             this.errors.favorite_genres = 'Pick at least one music genre.';
         }
         if (!this.agreeAnonymous) {
-            this.errors.agree_anonymous = 'You must confirm that your registration is anonymous.';
+            this.errors.agree_anonymous = 'Please acknowledge how your email is used and that your ticket ID is required for entry.';
         }
 
         return Object.keys(this.errors).length === 0;
     },
 
     async submitForm() {
+        if (this.isSubmitting) return;
+
         if (!this.validate()) {
             // Scroll smoothly to form error
             const formCard = document.getElementById('registration-section');
@@ -141,6 +148,7 @@ Alpine.data('registrationApp', (initialData = {}) => ({
                     'X-CSRF-TOKEN': csrfToken,
                 },
                 body: JSON.stringify({
+                    email: this.email,
                     nickname: this.nickname,
                     age_range: this.ageRange,
                     country: this.country,
@@ -173,6 +181,7 @@ Alpine.data('registrationApp', (initialData = {}) => ({
             // Success state
             setTimeout(async () => {
                 this.ticket = data.ticket;
+                this.successMessage = data.message;
                 this.isSubmitting = false;
                 this.showSuccessModal = true;
                 await this.generateTicketQR(this.ticket.ticket_id);
@@ -249,6 +258,7 @@ Alpine.data('registrationApp', (initialData = {}) => ({
     },
 
     resetRegistration() {
+        this.email = '';
         this.nickname = '';
         this.ageRange = '';
         this.country = '';
@@ -257,6 +267,7 @@ Alpine.data('registrationApp', (initialData = {}) => ({
         this.message = '';
         this.agreeAnonymous = false;
         this.showSuccessModal = false;
+        this.successMessage = '';
         this.ticket = null;
         this.errors = {};
         this.submitProgress = 0;

@@ -1,6 +1,7 @@
 <x-app-layout>
     @php
         $initialData = [
+            'oldEmail' => old('email', ''),
             'oldNickname' => old('nickname', ''),
             'oldAgeRange' => old('age_range', ''),
             'oldCountry' => old('country', ''),
@@ -9,6 +10,7 @@
             'oldMessage' => old('message', ''),
             'errors' => $errors->toArray(),
             'successTicket' => session('success_ticket', null),
+            'successMessage' => session('success_message', ''),
         ];
     @endphp
 

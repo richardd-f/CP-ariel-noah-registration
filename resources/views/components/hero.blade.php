@@ -8,7 +8,7 @@
             <div class="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-white/5 border border-purple-500/30 backdrop-blur-md shadow-lg shadow-purple-900/20 animate-pulse-glow">
                 <span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
                 <span class="text-xs font-medium text-cyan-300 font-mono tracking-wide">
-                    100% PRIVATE · ZERO DATA LOGGING
+                    NO ACCOUNT · EMAIL CONFIRMATION
                 </span>
             </div>
 
@@ -20,7 +20,7 @@
 
             <!-- Subtitle -->
             <p class="text-base sm:text-xl text-gray-300 max-w-2xl font-light leading-relaxed">
-                Reserve your anonymous concert entry in seconds. No login, no account, no phone, no identity required. Complete privacy by design.
+                Reserve your concert entry without a login, account, real name, or phone number. Receive your confirmation and ticket links by email.
             </p>
 
             <!-- Prominent Anonymous Guarantee Notice -->
@@ -29,7 +29,7 @@
                     <i data-lucide="shield-check" class="w-5 h-5"></i>
                 </div>
                 <span>
-                    <strong>Your identity is completely anonymous.</strong> We issue cryptographically signed, randomized access tokens without linking to any personal information.
+                    <strong>No account or real name required.</strong> Your email is used to send your confirmation and is not saved with your registration.
                 </span>
             </div>
 
@@ -69,8 +69,8 @@
                 </div>
                 <div class="h-8 w-px bg-white/10"></div>
                 <div class="flex flex-col">
-                    <span class="font-display font-bold text-lg sm:text-xl text-pink-400">&lt; 2 Sec</span>
-                    <span class="text-xs text-gray-400">Instant Pass Issuance</span>
+                    <span class="font-display font-bold text-lg sm:text-xl text-pink-400">Email</span>
+                    <span class="text-xs text-gray-400">Ticket Confirmation</span>
                 </div>
             </div>
 

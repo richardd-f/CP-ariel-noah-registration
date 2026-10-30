@@ -58,13 +58,13 @@
                             Privacy First
                         </h3>
                         <p class="text-sm text-gray-400 leading-relaxed">
-                            Your identity is never collected. No real names, no email addresses, no phone numbers, and no government IDs will ever be requested.
+                            No real name, phone number, or government ID is required. Your email is used for your confirmation and is not saved with your registration.
                         </p>
                     </div>
                 </div>
 
                 <div class="pt-6 border-t border-white/5 flex items-center justify-between text-xs font-mono text-cyan-300/80">
-                    <span>SECURITY: PII FORBIDDEN</span>
+                    <span>EMAIL: CONFIRMATION ONLY</span>
                     <i data-lucide="lock" class="w-4 h-4 text-cyan-400"></i>
                 </div>
             </div>
@@ -84,7 +84,7 @@
                             Instant Confirmation
                         </h3>
                         <p class="text-sm text-gray-400 leading-relaxed">
-                            Receive your anonymous ticket immediately upon submitting. Save your token ID and QR pass directly to your device.
+                            Receive your ticket after submitting and a confirmation by email. Save your ticket ID and QR pass directly to your device.
                         </p>
                     </div>
                 </div>

@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreAnonymousRegistrationRequest extends FormRequest
@@ -17,11 +18,12 @@ class StoreAnonymousRegistrationRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array<string, ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {
         return [
+            'email' => ['required', 'string', 'email', 'max:254'],
             'nickname' => ['nullable', 'string', 'max:50'],
             'age_range' => ['required', 'string', 'in:Under 18,18-24,25-34,35-44,45+'],
             'country' => ['required', 'string', 'max:100'],
@@ -39,13 +41,15 @@ class StoreAnonymousRegistrationRequest extends FormRequest
     public function messages(): array
     {
         return [
+            'email.required' => 'Please enter your email address for the confirmation.',
+            'email.email' => 'Please enter a valid email address.',
             'age_range.required' => 'Please select your age range.',
             'age_range.in' => 'Please select a valid age range option.',
             'country.required' => 'Please choose your country of residence.',
             'favorite_genres.required' => 'Select at least one favorite music genre.',
             'favorite_genres.min' => 'Please pick at least one music genre.',
             'favorite_genres.*.in' => 'One of the selected music genres is invalid.',
-            'agree_anonymous.accepted' => 'You must acknowledge that this registration is 100% anonymous.',
+            'agree_anonymous.accepted' => 'Please acknowledge how your email is used and that your ticket ID is required for entry.',
             'message.max' => 'Your message cannot exceed 1,000 characters.',
             'nickname.max' => 'Nickname cannot exceed 50 characters.',
         ];

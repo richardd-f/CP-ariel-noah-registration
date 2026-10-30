@@ -20,7 +20,7 @@
                 
                 <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-mono font-semibold tracking-wider bg-purple-500/10 text-purple-300 border border-purple-500/30">
                     <i data-lucide="shield-check" class="w-4 h-4 text-cyan-400"></i>
-                    <span>ZERO-KNOWLEDGE REGISTRATION PROTOCOL</span>
+                    <span>NO ACCOUNT REQUIRED</span>
                 </div>
 
                 <h2 class="font-display text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
@@ -28,14 +28,14 @@
                 </h2>
 
                 <p class="text-gray-300 text-sm sm:text-base max-w-xl mx-auto font-light">
-                    No account. No email. No phone number. Fill in the anonymous survey to obtain your encrypted admission token.
+                    No account or phone number required. Complete the survey and receive your ticket confirmation by email.
                 </p>
 
                 <!-- High-Impact Privacy Notice Banner -->
                 <div class="p-4 rounded-2xl bg-gradient-to-r from-purple-950/40 via-cyan-950/30 to-purple-950/40 border border-cyan-500/30 text-xs sm:text-sm text-cyan-200 flex items-center justify-center gap-3 shadow-lg shadow-cyan-950/30">
                     <i data-lucide="lock" class="w-5 h-5 text-cyan-400 flex-shrink-0"></i>
                     <span class="font-medium">
-                        <strong>"Your identity is completely anonymous."</strong> No personally identifiable data is requested or stored.
+                        <strong>Your email is used for confirmation only.</strong> It is not saved with your registration or displayed on your ticket.
                     </span>
                 </div>
 
@@ -47,6 +47,27 @@
                   method="POST" 
                   class="space-y-8 relative z-10">
                 @csrf
+
+                <div class="space-y-2">
+                    <label for="email" class="block text-sm font-semibold text-gray-200">
+                        Email address <span class="text-pink-400">*</span>
+                    </label>
+                    <input type="email"
+                           id="email"
+                           name="email"
+                           x-model="email"
+                           value="{{ old('email') }}"
+                           autocomplete="email"
+                           required
+                           maxlength="254"
+                           placeholder="you@example.com"
+                           aria-describedby="email-help email-error"
+                           :aria-invalid="!!errors.email"
+                           class="glass-input w-full px-4 py-3.5 rounded-2xl text-sm placeholder-gray-500 font-sans"
+                           :class="errors.email ? 'border-red-500 ring-1 ring-red-500' : ''">
+                    <p id="email-help" class="text-xs text-gray-400">We will send your confirmation and ticket links to this address.</p>
+                    <p id="email-error" role="alert" class="text-xs text-red-400 font-mono" x-text="errors.email || ''">{{ $errors->first('email') }}</p>
+                </div>
 
                 <!-- 1. Nickname Field (Optional) -->
                 <div class="space-y-2">
@@ -219,9 +240,9 @@
                                    class="w-5 h-5 rounded-lg bg-black/60 border-white/20 text-purple-600 focus:ring-purple-500 focus:ring-offset-black cursor-pointer">
                         </div>
                         <div class="flex-1 text-xs sm:text-sm text-gray-300 group-hover:text-white transition-colors">
-                            <span class="font-medium text-white">I understand this registration is anonymous.</span>
+                            <span class="font-medium text-white">I understand how my email and ticket are used.</span>
                             <p class="text-xs text-gray-400 mt-0.5">
-                                I acknowledge that no credentials or personal identity are tied to this reservation, and my ticket ID is the sole key for entry.
+                                My email is used to send the confirmation and is not saved with my registration. My ticket ID is the key for entry.
                             </p>
                         </div>
                     </label>
@@ -274,7 +295,7 @@
                                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                                         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                                     </svg>
-                                    <span class="font-display">Issuing Anonymous Pass...</span>
+                                    <span class="font-display">Preparing Pass &amp; Confirmation...</span>
                                 </span>
                             </template>
 
@@ -285,7 +306,7 @@
                 <!-- Footer Assurance -->
                 <div class="text-center text-xs text-gray-400 pt-2 flex items-center justify-center gap-2">
                     <i data-lucide="shield" class="w-4 h-4 text-emerald-400"></i>
-                    <span>No personal logs · Instant cryptographic verification · Free reservation</span>
+                    <span>No account needed · Email confirmation · Free reservation</span>
                 </div>
 
             </form>

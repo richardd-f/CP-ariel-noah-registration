@@ -42,8 +42,8 @@
             <h3 id="success-modal-title" class="font-display text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
                 You're in.
             </h3>
-            <p class="text-sm sm:text-base text-gray-300">
-                Your anonymous reservation has been received.
+            <p class="text-sm sm:text-base text-gray-300" role="status" x-text="successMessage || 'Your reservation has been received.'">
+                Your reservation has been received.
             </p>
         </div>
 
@@ -134,7 +134,7 @@
 
         <!-- Privacy Reminder Footer -->
         <p class="text-[11px] text-gray-500 font-mono pt-1">
-            Save this Ticket ID now. Since we do not collect your email or identity, this screen is your only copy.
+            Keep your ticket ID safe. Your email address is not saved with your registration.
         </p>
 
     </div>
