@@ -166,6 +166,42 @@ class AnonymousRegistrationTest extends TestCase
             $mail->assertSeeInHtml($content);
             $mail->assertSeeInText($content);
         }
+
+        $mail->assertSeeInHtml('ANONYMOUS PASS ID');
+        $mail->assertSeeInHtml('VALIDATED');
+        $mail->assertSeeInHtml('Download Ticket');
+    }
+
+    public function test_confirmation_embeds_a_ticket_specific_png_and_escapes_the_guest_alias(): void
+    {
+        $concert = app(TicketService::class)->getConcertDetails();
+        $ticket = [
+            'ticket_id' => 'ANON-TEST123',
+            'nickname' => '<script>alert("guest")</script>',
+            'concert' => $concert,
+            'view_url' => route('ticket.show', 'ANON-TEST123'),
+            'download_url' => route('ticket.download', 'ANON-TEST123'),
+        ];
+
+        $sent = Mail::mailer('array')->to('guest@example.com')->send(new RegistrationConfirmation($ticket));
+        $message = $sent->getSymfonySentMessage()->getOriginalMessage();
+        $attachments = $message->getAttachments();
+
+        $this->assertCount(1, $attachments);
+        $this->assertSame('inline', $attachments[0]->getDisposition());
+        $this->assertSame('image/png', $attachments[0]->getContentType());
+        $this->assertSame('ticket-qr.png', $attachments[0]->getFilename());
+        $this->assertStringContainsString('cid:'.$attachments[0]->getContentId(), $message->getHtmlBody());
+        $this->assertStringContainsString(e($ticket['nickname']), $message->getHtmlBody());
+        $this->assertStringNotContainsString('<script>', $message->getHtmlBody());
+        $this->assertStringContainsString($ticket['ticket_id'], $message->getTextBody());
+        $this->assertStringNotContainsString('cid:', $message->getTextBody());
+
+        $png = $attachments[0]->getBody();
+        $this->assertSame(IMAGETYPE_PNG, getimagesizefromstring($png)[2]);
+
+        $otherMail = new RegistrationConfirmation(array_replace($ticket, ['ticket_id' => 'ANON-OTHER12']));
+        $this->assertNotSame($png, $otherMail->content()->with['qrCode']);
     }
 
     /**

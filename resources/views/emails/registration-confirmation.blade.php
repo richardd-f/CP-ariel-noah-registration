@@ -1,30 +1,135 @@
-<x-mail::message>
-# Registration confirmed
-
-Hello {{ $ticket['nickname'] }},
-
-Your reservation for **{{ $ticket['concert']['title'] }}** is confirmed.
-
-**Ticket ID:** {{ $ticket['ticket_id'] }}
-
-**Date:** {{ $ticket['concert']['date_formatted'] }}
-
-**Doors open:** {{ $ticket['concert']['doors_open'] }}
-
-**Show time:** {{ $ticket['concert']['show_time'] }}
-
-**Venue:** {{ $ticket['concert']['venue'] }}
-
-**Gate:** {{ $ticket['concert']['gate_code'] }}
-
-<x-mail::button :url="$ticket['view_url']">
-View your ticket
-</x-mail::button>
-
-You can also [open your printable ticket]({{ $ticket['download_url'] }}).
-
-Keep your ticket ID safe and bring your ticket or QR pass for entry. Your email address is used to send this confirmation and is not saved with your registration.
-
-See you there,<br>
-{{ $ticket['concert']['title'] }}
-</x-mail::message>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="dark">
+    <title>Your {{ $ticket['concert']['title'] }} ticket</title>
+    <style>
+        @media only screen and (max-width: 480px) {
+            .card-padding { padding: 24px 16px !important; }
+            .ticket-column { display: block !important; width: 100% !important; }
+            .event-details { padding: 20px 0 0 !important; }
+            .action-column { display: block !important; width: 100% !important; padding: 0 0 12px !important; }
+        }
+    </style>
+</head>
+<body style="margin: 0; padding: 0; background-color: #030303; color: #f3f4f6; font-family: Arial, Helvetica, sans-serif;">
+    <div style="display: none; max-height: 0; overflow: hidden; mso-hide: all;">You're in. Your ticket {{ $ticket['ticket_id'] }} and QR pass are ready.</div>
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="#030303" style="background-color: #030303;">
+        <tr>
+            <td align="center" style="padding: 24px 12px;">
+                <table role="presentation" width="520" cellspacing="0" cellpadding="0" border="0" bgcolor="#0a0a0f" style="width: 100%; max-width: 520px; background-color: #0a0a0f; border: 1px solid #27272f; border-radius: 24px; overflow: hidden;">
+                    <tr>
+                        <td height="5" bgcolor="#7c3aed" style="height: 5px; background: linear-gradient(90deg, #7c3aed, #06b6d4); font-size: 0; line-height: 5px;">&nbsp;</td>
+                    </tr>
+                    <tr>
+                        <td class="card-padding" style="padding: 32px 24px;">
+                            <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
+                                <tr>
+                                    <td align="center" style="padding-bottom: 20px;">
+                                        <table role="presentation" width="80" cellspacing="0" cellpadding="0" border="0">
+                                            <tr>
+                                                <td align="center" valign="middle" width="80" height="80" bgcolor="#073337" style="width: 80px; height: 80px; background-color: #073337; border: 1px solid #10d9aa; border-radius: 50%; color: #10d9aa; font-size: 44px; font-weight: bold; line-height: 80px;">&#10003;</td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align="center">
+                                        <h1 style="margin: 0 0 8px; color: #ffffff; font-size: 32px; line-height: 38px; letter-spacing: -1px;">You're in.</h1>
+                                        <p style="margin: 0; color: #d1d5db; font-size: 14px; line-height: 22px;">Your reservation is confirmed.<br>Here is your anonymous concert pass.</p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="padding-top: 24px;">
+                                        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="#050505" style="background-color: #050505; border: 1px solid #242429; border-radius: 16px;">
+                                            <tr>
+                                                <td style="padding: 18px 16px;">
+                                                    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
+                                                        <tr>
+                                                            <td style="padding-bottom: 12px; border-bottom: 1px solid #242429; color: #9ca3af; font-family: 'Courier New', monospace; font-size: 10px;">ANONYMOUS PASS ID</td>
+                                                            <td align="right" style="padding-bottom: 12px; border-bottom: 1px solid #242429;">
+                                                                <span style="display: inline-block; padding: 4px 7px; border: 1px solid #07515a; border-radius: 4px; background-color: #062026; color: #67e8f9; font-family: 'Courier New', monospace; font-size: 9px;">&#9679; VALIDATED</span>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td colspan="2" style="padding-top: 14px;">
+                                                                <div style="padding: 14px; border: 1px solid #2d2d39; border-radius: 12px; background-color: #0e0e18; color: #67e8f9; font-family: 'Courier New', monospace; font-size: 22px; font-weight: bold; letter-spacing: 2px; overflow-wrap: anywhere;">{{ $ticket['ticket_id'] }}</div>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td colspan="2" style="padding-top: 20px;">
+                                                                <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
+                                                                    <tr>
+                                                                        <td class="ticket-column" width="46%" valign="middle">
+                                                                            <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="#ffffff" style="background-color: #ffffff; border-radius: 12px;">
+                                                                                <tr>
+                                                                                    <td align="center" style="padding: 10px 8px 12px;">
+                                                                                        <img src="{{ $message->embedData($qrCode, 'ticket-qr.png', 'image/png') }}" width="152" height="152" alt="QR code for ticket {{ $ticket['ticket_id'] }}" style="display: block; width: 152px; height: 152px; border: 0;">
+                                                                                        <p style="margin: 6px 0 0; color: #1f2937; font-family: 'Courier New', monospace; font-size: 9px; line-height: 14px;">Scan at {{ $ticket['concert']['gate_code'] }}</p>
+                                                                                    </td>
+                                                                                </tr>
+                                                                            </table>
+                                                                        </td>
+                                                                        <td class="ticket-column event-details" width="54%" valign="middle" style="padding-left: 16px; overflow-wrap: anywhere;">
+                                                                            <p style="margin: 0 0 4px; color: #808898; font-family: 'Courier New', monospace; font-size: 10px;">EVENT:</p>
+                                                                            <p style="margin: 0 0 12px; color: #ffffff; font-size: 13px; font-weight: bold; line-height: 18px;">{{ $ticket['concert']['title'] }} {{ date('Y', strtotime($ticket['concert']['date_iso'])) }}</p>
+                                                                            <p style="margin: 0 0 4px; color: #808898; font-family: 'Courier New', monospace; font-size: 10px;">DATE:</p>
+                                                                            <p style="margin: 0 0 4px; color: #d1d5db; font-family: 'Courier New', monospace; font-size: 11px; line-height: 17px;">{{ $ticket['concert']['date_formatted'] }}</p>
+                                                                            <p style="margin: 0 0 12px; color: #d1d5db; font-family: 'Courier New', monospace; font-size: 11px; line-height: 17px;">{{ $ticket['concert']['show_time'] }}<br>Doors: {{ $ticket['concert']['doors_open'] }}</p>
+                                                                            <p style="margin: 0 0 4px; color: #808898; font-family: 'Courier New', monospace; font-size: 10px;">VENUE:</p>
+                                                                            <p style="margin: 0 0 12px; color: #d1d5db; font-family: 'Courier New', monospace; font-size: 11px; line-height: 17px;">{{ $ticket['concert']['venue'] }}</p>
+                                                                            <p style="margin: 0 0 4px; color: #808898; font-family: 'Courier New', monospace; font-size: 10px;">GUEST ALIAS:</p>
+                                                                            <p style="margin: 0; color: #f472b6; font-family: 'Courier New', monospace; font-size: 12px; font-weight: bold; line-height: 18px;">{{ $ticket['nickname'] }}</p>
+                                                                        </td>
+                                                                    </tr>
+                                                                </table>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="padding-top: 24px;">
+                                        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
+                                            <tr>
+                                                <td class="action-column" width="50%" valign="top" style="padding-right: 6px;">
+                                                    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
+                                                        <tr>
+                                                            <td align="center" bgcolor="#7c3aed" style="border: 1px solid #8b5cf6; border-radius: 10px; background: linear-gradient(90deg, #9333ea, #06b6d4); mso-padding-alt: 14px 12px;">
+                                                                <a href="{{ $ticket['download_url'] }}" style="display: block; padding: 14px 12px; color: #ffffff; font-size: 13px; font-weight: bold; line-height: 18px; text-decoration: none;">Download Ticket</a>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                </td>
+                                                <td class="action-column" width="50%" valign="top" style="padding-left: 6px;">
+                                                    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
+                                                        <tr>
+                                                            <td align="center" bgcolor="#18181b" style="background-color: #18181b; border: 1px solid #35353d; border-radius: 10px; mso-padding-alt: 14px 12px;">
+                                                                <a href="{{ $ticket['view_url'] }}" style="display: block; padding: 14px 12px; color: #e5e7eb; font-size: 13px; font-weight: bold; line-height: 18px; text-decoration: none;">View Ticket</a>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align="center" style="padding-top: 20px;">
+                                        <p style="margin: 0; color: #9299a8; font-family: 'Courier New', monospace; font-size: 10px; line-height: 18px;">Keep your ticket ID safe. Your email address is not saved with your registration.</p>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>
