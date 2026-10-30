@@ -11,6 +11,13 @@ Show time: {!! $ticket['concert']['show_time'] !!}
 Venue: {!! $ticket['concert']['venue'] !!}
 Gate: {!! $ticket['concert']['gate_code'] !!}
 
+Your registration details
+Keep this email as a record of the information you submitted.
+
+@foreach ($registrationRows as $label => $value)
+{!! $label !!}: {!! $value !!}
+@endforeach
+
 View your ticket: {!! $ticket['view_url'] !!}
 Download your printable ticket: {!! $ticket['download_url'] !!}
 

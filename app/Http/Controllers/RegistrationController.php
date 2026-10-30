@@ -77,7 +77,10 @@ class RegistrationController extends Controller
         $emailSent = false;
 
         try {
-            Mail::to($validated['email'])->send(new RegistrationConfirmation($ticketPayload));
+            Mail::to($validated['email'])->send(new RegistrationConfirmation(
+                $ticketPayload,
+                $validated + ['registered_at' => $registration->created_at->toIso8601String()],
+            ));
             $emailSent = true;
         } catch (Throwable $exception) {
             report($exception);

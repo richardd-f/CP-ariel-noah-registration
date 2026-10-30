@@ -83,6 +83,16 @@ class AnonymousRegistrationTest extends TestCase
         });
         Mail::assertSentCount(1);
 
+        $mail = Mail::sent(RegistrationConfirmation::class)->first();
+        $this->assertEmpty($mail->cc);
+        $this->assertEmpty($mail->bcc);
+        $mail->assertSeeInHtml('Your registration details');
+        $mail->assertSeeInText('Your registration details');
+        foreach (['guest@example.com', 'CyberGuest', '25-34', 'Indonesia', 'Rock, EDM', 'Discord', 'Cannot wait for Ariel Noah x Synthesia live!', 'Accepted', $registration->created_at->toIso8601String()] as $detail) {
+            $mail->assertSeeInHtml($detail);
+            $mail->assertSeeInText($detail);
+        }
+
         // Test ticket pass page
         $ticketResponse = $this->get('/ticket/'.$ticketId);
         $ticketResponse->assertStatus(200);
@@ -159,7 +169,7 @@ class AnonymousRegistrationTest extends TestCase
             'view_url' => route('ticket.show', 'ANON-TEST123'),
             'download_url' => route('ticket.download', 'ANON-TEST123'),
         ];
-        $mail = new RegistrationConfirmation($ticket);
+        $mail = new RegistrationConfirmation($ticket, $this->registrationDetails());
 
         $mail->assertHasSubject('NOVA HORIZON - Registration Confirmation');
         foreach ([$ticket['ticket_id'], $ticket['nickname'], $concert['date_formatted'], $concert['venue'], $concert['gate_code'], $ticket['view_url'], $ticket['download_url']] as $content) {
@@ -183,7 +193,8 @@ class AnonymousRegistrationTest extends TestCase
             'download_url' => route('ticket.download', 'ANON-TEST123'),
         ];
 
-        $sent = Mail::mailer('array')->to('guest@example.com')->send(new RegistrationConfirmation($ticket));
+        $details = array_replace($this->registrationDetails(), ['message' => '<img src=x onerror=alert(1)>'."\n".str_repeat('x', 900)]);
+        $sent = Mail::mailer('array')->to('guest@example.com')->send(new RegistrationConfirmation($ticket, $details));
         $message = $sent->getSymfonySentMessage()->getOriginalMessage();
         $attachments = $message->getAttachments();
 
@@ -194,14 +205,40 @@ class AnonymousRegistrationTest extends TestCase
         $this->assertStringContainsString('cid:'.$attachments[0]->getContentId(), $message->getHtmlBody());
         $this->assertStringContainsString(e($ticket['nickname']), $message->getHtmlBody());
         $this->assertStringNotContainsString('<script>', $message->getHtmlBody());
+        $this->assertStringContainsString(e($details['message']), $message->getHtmlBody());
+        $this->assertStringNotContainsString('<img src=x', $message->getHtmlBody());
+        $this->assertStringContainsString($details['message'], $message->getTextBody());
         $this->assertStringContainsString($ticket['ticket_id'], $message->getTextBody());
         $this->assertStringNotContainsString('cid:', $message->getTextBody());
 
         $png = $attachments[0]->getBody();
         $this->assertSame(IMAGETYPE_PNG, getimagesizefromstring($png)[2]);
 
-        $otherMail = new RegistrationConfirmation(array_replace($ticket, ['ticket_id' => 'ANON-OTHER12']));
+        $otherMail = new RegistrationConfirmation(array_replace($ticket, ['ticket_id' => 'ANON-OTHER12']), $details);
         $this->assertNotSame($png, $otherMail->content()->with['qrCode']);
+    }
+
+    public function test_confirmation_shows_when_optional_registration_fields_were_not_provided(): void
+    {
+        Mail::fake();
+        $payload = $this->registrationPayload();
+        unset($payload['nickname'], $payload['referral_source'], $payload['message']);
+
+        $this->postJson('/register', $payload)->assertCreated()->assertJsonPath('email_sent', true);
+
+        $mail = Mail::sent(RegistrationConfirmation::class)->first();
+        $mail->assertSeeInHtml('Not provided');
+        foreach (['Alias / nickname', 'Referral source', 'Message / song request'] as $label) {
+            $mail->assertSeeInText($label.': Not provided');
+        }
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function registrationDetails(): array
+    {
+        return $this->registrationPayload() + ['registered_at' => '2026-10-30T05:30:00+00:00'];
     }
 
     /**

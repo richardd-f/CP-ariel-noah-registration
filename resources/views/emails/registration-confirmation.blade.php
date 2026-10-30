@@ -122,6 +122,26 @@
                                     </td>
                                 </tr>
                                 <tr>
+                                    <td style="padding-top: 24px;">
+                                        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="#050505" style="background-color: #050505; border: 1px solid #242429; border-radius: 16px;">
+                                            <tr>
+                                                <td style="padding: 20px 16px;">
+                                                    <h2 style="margin: 0 0 8px; color: #ffffff; font-size: 18px; line-height: 24px;">Your registration details</h2>
+                                                    <p style="margin: 0 0 16px; color: #9ca3af; font-size: 12px; line-height: 18px;">Keep this email as a record of the information you submitted.</p>
+                                                    <table width="100%" cellspacing="0" cellpadding="0" border="0" style="width: 100%; table-layout: fixed; border-collapse: collapse;">
+                                                        @foreach ($registrationRows as $label => $value)
+                                                            <tr>
+                                                                <th scope="row" width="38%" align="left" valign="top" style="width: 38%; padding: 10px 12px 10px 0; border-top: 1px solid #242429; color: #9ca3af; font-size: 12px; font-weight: normal; line-height: 19px; overflow-wrap: anywhere;">{{ $label }}</th>
+                                                                <td valign="top" style="padding: 10px 0; border-top: 1px solid #242429; color: #e5e7eb; font-size: 13px; line-height: 19px; white-space: pre-wrap; overflow-wrap: anywhere; word-break: break-word;">{{ $value }}</td>
+                                                            </tr>
+                                                        @endforeach
+                                                    </table>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr>
                                     <td align="center" style="padding-top: 20px;">
                                         <p style="margin: 0; color: #9ca3af; font-family: Consolas, 'Courier New', monospace; font-size: 11px; line-height: 18px;">Keep your ticket ID safe. Your email address is not saved with your registration.</p>
                                     </td>
