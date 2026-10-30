@@ -4,12 +4,14 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="color-scheme" content="dark">
+    <meta name="supported-color-schemes" content="dark">
     <title>Your {{ $ticket['concert']['title'] }} ticket</title>
     <style>
+        :root { color-scheme: dark; supported-color-schemes: dark; }
         @media only screen and (max-width: 480px) {
             .card-padding { padding: 24px 16px !important; }
             .ticket-column { display: block !important; width: 100% !important; }
-            .event-details { padding: 20px 0 0 !important; }
+            .event-details { padding: 24px 0 0 !important; }
             .action-column { display: block !important; width: 100% !important; padding: 0 0 12px !important; }
         }
     </style>
@@ -21,7 +23,7 @@
             <td align="center" style="padding: 24px 12px;">
                 <table role="presentation" width="520" cellspacing="0" cellpadding="0" border="0" bgcolor="#0a0a0f" style="width: 100%; max-width: 520px; background-color: #0a0a0f; border: 1px solid #27272f; border-radius: 24px; overflow: hidden;">
                     <tr>
-                        <td height="5" bgcolor="#7c3aed" style="height: 5px; background: linear-gradient(90deg, #7c3aed, #06b6d4); font-size: 0; line-height: 5px;">&nbsp;</td>
+                        <td height="5" bgcolor="#0c5156" style="height: 5px; background: linear-gradient(90deg, #0c5156, #0b4f3e); font-size: 0; line-height: 5px;">&nbsp;</td>
                     </tr>
                     <tr>
                         <td class="card-padding" style="padding: 32px 24px;">
@@ -48,14 +50,14 @@
                                                 <td style="padding: 18px 16px;">
                                                     <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
                                                         <tr>
-                                                            <td style="padding-bottom: 12px; border-bottom: 1px solid #242429; color: #9ca3af; font-family: 'Courier New', monospace; font-size: 10px;">ANONYMOUS PASS ID</td>
+                                                            <td style="padding-bottom: 12px; border-bottom: 1px solid #242429; color: #9ca3af; font-family: Consolas, 'Courier New', monospace; font-size: 11px;">ANONYMOUS PASS ID</td>
                                                             <td align="right" style="padding-bottom: 12px; border-bottom: 1px solid #242429;">
-                                                                <span style="display: inline-block; padding: 4px 7px; border: 1px solid #07515a; border-radius: 4px; background-color: #062026; color: #67e8f9; font-family: 'Courier New', monospace; font-size: 9px;">&#9679; VALIDATED</span>
+                                                                <span style="display: inline-block; padding: 4px 7px; border: 1px solid #07515a; border-radius: 4px; background-color: #062026; color: #67e8f9; font-family: Consolas, 'Courier New', monospace; font-size: 11px;">&#9679; VALIDATED</span>
                                                             </td>
                                                         </tr>
                                                         <tr>
                                                             <td colspan="2" style="padding-top: 14px;">
-                                                                <div style="padding: 14px; border: 1px solid #2d2d39; border-radius: 12px; background-color: #0e0e18; color: #67e8f9; font-family: 'Courier New', monospace; font-size: 22px; font-weight: bold; letter-spacing: 2px; overflow-wrap: anywhere;">{{ $ticket['ticket_id'] }}</div>
+                                                                <div style="padding: 14px; border: 1px solid #2d2d39; border-radius: 12px; background-color: #0e0e18; color: #67e8f9; font-family: Consolas, 'Courier New', monospace; font-size: 22px; font-weight: bold; letter-spacing: 2px; overflow-wrap: anywhere;">{{ $ticket['ticket_id'] }}</div>
                                                             </td>
                                                         </tr>
                                                         <tr>
@@ -63,25 +65,25 @@
                                                                 <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
                                                                     <tr>
                                                                         <td class="ticket-column" width="46%" valign="middle">
-                                                                            <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="#ffffff" style="background-color: #ffffff; border-radius: 12px;">
+                                                                            <table role="presentation" align="center" width="200" cellspacing="0" cellpadding="0" border="0" bgcolor="#ffffff" style="width: 100%; max-width: 200px; background-color: #ffffff; border-radius: 12px;">
                                                                                 <tr>
                                                                                     <td align="center" style="padding: 10px 8px 12px;">
-                                                                                        <img src="{{ $message->embedData($qrCode, 'ticket-qr.png', 'image/png') }}" width="152" height="152" alt="QR code for ticket {{ $ticket['ticket_id'] }}" style="display: block; width: 152px; height: 152px; border: 0;">
-                                                                                        <p style="margin: 6px 0 0; color: #1f2937; font-family: 'Courier New', monospace; font-size: 9px; line-height: 14px;">Scan at {{ $ticket['concert']['gate_code'] }}</p>
+                                                                                        <img src="{{ $message->embedData($qrCode, 'ticket-qr.png', 'image/png') }}" width="168" height="168" alt="QR code for ticket {{ $ticket['ticket_id'] }}" style="display: block; width: 168px; height: 168px; border: 0;">
+                                                                                        <p style="margin: 6px 0 0; color: #1f2937; font-family: Consolas, 'Courier New', monospace; font-size: 11px; line-height: 16px;">Scan at<br>{{ $ticket['concert']['gate_code'] }}</p>
                                                                                     </td>
                                                                                 </tr>
                                                                             </table>
                                                                         </td>
                                                                         <td class="ticket-column event-details" width="54%" valign="middle" style="padding-left: 16px; overflow-wrap: anywhere;">
-                                                                            <p style="margin: 0 0 4px; color: #808898; font-family: 'Courier New', monospace; font-size: 10px;">EVENT:</p>
+                                                                            <p style="margin: 0 0 4px; color: #9ca3af; font-family: Consolas, 'Courier New', monospace; font-size: 11px;">EVENT:</p>
                                                                             <p style="margin: 0 0 12px; color: #ffffff; font-size: 13px; font-weight: bold; line-height: 18px;">{{ $ticket['concert']['title'] }} {{ date('Y', strtotime($ticket['concert']['date_iso'])) }}</p>
-                                                                            <p style="margin: 0 0 4px; color: #808898; font-family: 'Courier New', monospace; font-size: 10px;">DATE:</p>
-                                                                            <p style="margin: 0 0 4px; color: #d1d5db; font-family: 'Courier New', monospace; font-size: 11px; line-height: 17px;">{{ $ticket['concert']['date_formatted'] }}</p>
-                                                                            <p style="margin: 0 0 12px; color: #d1d5db; font-family: 'Courier New', monospace; font-size: 11px; line-height: 17px;">{{ $ticket['concert']['show_time'] }}<br>Doors: {{ $ticket['concert']['doors_open'] }}</p>
-                                                                            <p style="margin: 0 0 4px; color: #808898; font-family: 'Courier New', monospace; font-size: 10px;">VENUE:</p>
-                                                                            <p style="margin: 0 0 12px; color: #d1d5db; font-family: 'Courier New', monospace; font-size: 11px; line-height: 17px;">{{ $ticket['concert']['venue'] }}</p>
-                                                                            <p style="margin: 0 0 4px; color: #808898; font-family: 'Courier New', monospace; font-size: 10px;">GUEST ALIAS:</p>
-                                                                            <p style="margin: 0; color: #f472b6; font-family: 'Courier New', monospace; font-size: 12px; font-weight: bold; line-height: 18px;">{{ $ticket['nickname'] }}</p>
+                                                                            <p style="margin: 0 0 4px; color: #9ca3af; font-family: Consolas, 'Courier New', monospace; font-size: 11px;">DATE:</p>
+                                                                            <p style="margin: 0 0 4px; color: #d1d5db; font-family: Consolas, 'Courier New', monospace; font-size: 12px; line-height: 18px;">{{ $ticket['concert']['date_formatted'] }}</p>
+                                                                            <p style="margin: 0 0 12px; color: #d1d5db; font-family: Consolas, 'Courier New', monospace; font-size: 12px; line-height: 18px;">{{ $ticket['concert']['show_time'] }}<br>Doors: {{ $ticket['concert']['doors_open'] }}</p>
+                                                                            <p style="margin: 0 0 4px; color: #9ca3af; font-family: Consolas, 'Courier New', monospace; font-size: 11px;">VENUE:</p>
+                                                                            <p style="margin: 0 0 12px; color: #d1d5db; font-family: Consolas, 'Courier New', monospace; font-size: 12px; line-height: 18px;">{{ $ticket['concert']['venue'] }}</p>
+                                                                            <p style="margin: 0 0 4px; color: #9ca3af; font-family: Consolas, 'Courier New', monospace; font-size: 11px;">GUEST ALIAS:</p>
+                                                                            <p style="margin: 0; color: #f472b6; font-family: Consolas, 'Courier New', monospace; font-size: 13px; font-weight: bold; line-height: 19px;">{{ $ticket['nickname'] }}</p>
                                                                         </td>
                                                                     </tr>
                                                                 </table>
@@ -121,7 +123,7 @@
                                 </tr>
                                 <tr>
                                     <td align="center" style="padding-top: 20px;">
-                                        <p style="margin: 0; color: #9299a8; font-family: 'Courier New', monospace; font-size: 10px; line-height: 18px;">Keep your ticket ID safe. Your email address is not saved with your registration.</p>
+                                        <p style="margin: 0; color: #9ca3af; font-family: Consolas, 'Courier New', monospace; font-size: 11px; line-height: 18px;">Keep your ticket ID safe. Your email address is not saved with your registration.</p>
                                     </td>
                                 </tr>
                             </table>
