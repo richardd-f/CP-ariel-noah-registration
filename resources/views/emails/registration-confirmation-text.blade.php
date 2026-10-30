@@ -1,8 +1,10 @@
-You're in.
+Confirm your registration
 
 Hello {!! $ticket['nickname'] !!},
 
-Your reservation for {!! $ticket['concert']['title'] !!} is confirmed.
+We received your registration for {!! $ticket['concert']['title'] !!}. It is awaiting email confirmation.
+
+Confirm my Registration: {!! $confirmationUrl !!}
 
 Ticket ID: {!! $ticket['ticket_id'] !!}
 Date: {!! $ticket['concert']['date_formatted'] !!}
@@ -18,8 +20,8 @@ Keep this email as a record of the information you submitted.
 {!! $label !!}: {!! $value !!}
 @endforeach
 
-View your ticket: {!! $ticket['view_url'] !!}
+View your registration: {!! $ticket['view_url'] !!}
 Download your printable ticket: {!! $ticket['download_url'] !!}
 
-Keep your ticket ID safe and bring your ticket or QR pass for entry.
+Your registration stays pending until you click Confirm my Registration. Keep this email private.
 Your email address is used to send this confirmation and is not saved with your registration.

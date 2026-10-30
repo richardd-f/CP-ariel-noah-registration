@@ -7,6 +7,7 @@ use App\Models\AnonymousRegistration;
 use App\Services\TicketService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\URL;
 use Symfony\Component\Mailer\Exception\TransportException;
 use Tests\TestCase;
 
@@ -75,8 +76,10 @@ class AnonymousRegistrationTest extends TestCase
 
         $registration = AnonymousRegistration::where('anonymous_ticket_id', $ticketId)->first();
         $this->assertNotNull($registration);
+        $this->assertNull($registration->confirmed_at);
         $this->assertArrayNotHasKey('email', $registration->getAttributes());
         $response->assertDontSee('guest@example.com');
+        $response->assertDontSee('signature=');
 
         Mail::assertSent(RegistrationConfirmation::class, function (RegistrationConfirmation $mail) use ($ticketId): bool {
             return $mail->hasTo('guest@example.com') && $mail->ticket['ticket_id'] === $ticketId;
@@ -98,6 +101,8 @@ class AnonymousRegistrationTest extends TestCase
         $ticketResponse->assertStatus(200);
         $ticketResponse->assertSee($ticketId);
         $ticketResponse->assertSee('CyberDome Arena');
+        $ticketResponse->assertSee('Awaiting email confirmation');
+        $ticketResponse->assertDontSee('signature=');
         $ticketResponse->assertDontSee('guest@example.com');
         $this->get('/ticket/'.$ticketId.'/download')->assertOk()->assertDontSee('guest@example.com');
     }
@@ -124,9 +129,9 @@ class AnonymousRegistrationTest extends TestCase
 
         $response->assertRedirect();
         $response->assertSessionHas('success_ticket.ticket_id');
-        $response->assertSessionHas('success_message', fn (string $message): bool => str_contains($message, 'confirmation email has been sent'));
+        $response->assertSessionHas('success_message', fn (string $message): bool => str_contains($message, 'awaiting confirmation'));
         Mail::assertSent(RegistrationConfirmation::class, 'guest@example.com');
-        $this->followRedirects($response)->assertOk()->assertSee('confirmation email has been sent');
+        $this->followRedirects($response)->assertOk()->assertSee('awaiting confirmation');
     }
 
     public function test_ticket_is_preserved_when_confirmation_email_fails(): void
@@ -140,9 +145,10 @@ class AnonymousRegistrationTest extends TestCase
         $response->assertCreated()
             ->assertJsonPath('success', true)
             ->assertJsonPath('email_sent', false)
-            ->assertJsonPath('message', 'Your reservation is confirmed, but we could not send the confirmation email. Please save your ticket now.')
+            ->assertJsonPath('message', 'Your registration has been saved, but we could not send the confirmation email. It remains unconfirmed. Please save your ticket ID and contact the organizer.')
             ->assertDontSee('SMTP unavailable');
         $this->assertDatabaseCount('anonymous_registrations', 1);
+        $this->assertNull(AnonymousRegistration::first()->confirmed_at);
         $this->get($response->json('ticket.view_url'))->assertOk();
     }
 
@@ -171,15 +177,18 @@ class AnonymousRegistrationTest extends TestCase
         ];
         $mail = new RegistrationConfirmation($ticket, $this->registrationDetails());
 
-        $mail->assertHasSubject('NOVA HORIZON - Registration Confirmation');
-        foreach ([$ticket['ticket_id'], $ticket['nickname'], $concert['date_formatted'], $concert['venue'], $concert['gate_code'], $ticket['view_url'], $ticket['download_url']] as $content) {
+        $mail->assertHasSubject('NOVA HORIZON - Confirm your Registration');
+        foreach ([$ticket['ticket_id'], $ticket['nickname'], $concert['date_formatted'], $concert['venue'], $concert['gate_code'], $ticket['view_url'], $mail->content()->with['confirmationUrl']] as $content) {
             $mail->assertSeeInHtml($content);
             $mail->assertSeeInText($content);
         }
 
         $mail->assertSeeInHtml('ANONYMOUS PASS ID');
-        $mail->assertSeeInHtml('VALIDATED');
-        $mail->assertSeeInHtml('Download Ticket');
+        $mail->assertSeeInHtml('PENDING');
+        $mail->assertSeeInHtml('Confirm my Registration');
+        $mail->assertSeeInText($ticket['download_url']);
+        $mail->assertDontSeeInHtml('Your reservation is confirmed.');
+        $mail->assertDontSeeInText('is confirmed.');
     }
 
     public function test_confirmation_embeds_a_ticket_specific_png_and_escapes_the_guest_alias(): void
@@ -231,6 +240,78 @@ class AnonymousRegistrationTest extends TestCase
         foreach (['Alias / nickname', 'Referral source', 'Message / song request'] as $label) {
             $mail->assertSeeInText($label.': Not provided');
         }
+    }
+
+    public function test_email_link_confirms_the_registration_and_displays_the_confirmation(): void
+    {
+        Mail::fake();
+        $this->freezeTime();
+
+        $response = $this->postJson('/register', $this->registrationPayload() + ['confirmed_at' => '2020-01-01 00:00:00']);
+        $registration = AnonymousRegistration::firstOrFail();
+        $this->assertNull($registration->confirmed_at);
+
+        $mail = Mail::sent(RegistrationConfirmation::class)->first();
+        $confirmationUrl = $mail->content()->with['confirmationUrl'];
+        $this->call('HEAD', $confirmationUrl)->assertRedirect();
+        $this->assertNull($registration->fresh()->confirmed_at);
+        $confirmation = $this->get($confirmationUrl)->assertRedirect($response->json('ticket.view_url'));
+
+        $this->assertSame(now()->toDateTimeString(), $registration->fresh()->confirmed_at->toDateTimeString());
+        $this->followRedirects($confirmation)->assertOk()->assertSee('Registration confirmed')->assertSee('CONFIRMED');
+        $this->get($response->json('ticket.download_url'))->assertOk()->assertSee('Registration confirmed');
+        $this->assertDatabaseCount('anonymous_registrations', 1);
+        Mail::assertSentCount(1);
+    }
+
+    public function test_repeated_confirmation_preserves_the_original_confirmation_time(): void
+    {
+        Mail::fake();
+        $this->freezeTime();
+        $this->postJson('/register', $this->registrationPayload())->assertCreated();
+        $confirmationUrl = Mail::sent(RegistrationConfirmation::class)->first()->content()->with['confirmationUrl'];
+
+        $this->get($confirmationUrl)->assertRedirect();
+        $registration = AnonymousRegistration::firstOrFail();
+        $confirmedAt = $registration->confirmed_at->toIso8601String();
+        $updatedAt = $registration->updated_at->toIso8601String();
+
+        $this->travel(1)->hours();
+        $this->get($confirmationUrl)->assertRedirect();
+
+        $this->assertSame($confirmedAt, $registration->fresh()->confirmed_at->toIso8601String());
+        $this->assertSame($updatedAt, $registration->fresh()->updated_at->toIso8601String());
+        $this->assertDatabaseCount('anonymous_registrations', 1);
+    }
+
+    public function test_a_ticket_id_without_an_email_signature_cannot_confirm_registration(): void
+    {
+        Mail::fake();
+        $response = $this->postJson('/register', $this->registrationPayload())->assertCreated();
+
+        $this->get(route('registration.confirm', $response->json('ticket.ticket_id')))->assertForbidden();
+
+        $this->assertNull(AnonymousRegistration::firstOrFail()->confirmed_at);
+    }
+
+    public function test_changing_the_ticket_id_invalidates_the_confirmation_link(): void
+    {
+        Mail::fake();
+        $first = $this->postJson('/register', $this->registrationPayload())->assertCreated();
+        $second = $this->postJson('/register', $this->registrationPayload())->assertCreated();
+        $confirmationUrl = Mail::sent(RegistrationConfirmation::class)->first()->content()->with['confirmationUrl'];
+        $tamperedUrl = str_replace($first->json('ticket.ticket_id'), $second->json('ticket.ticket_id'), $confirmationUrl);
+
+        $this->get($tamperedUrl)->assertForbidden();
+
+        $this->assertSame(0, AnonymousRegistration::whereNotNull('confirmed_at')->count());
+    }
+
+    public function test_confirmation_of_an_unknown_registration_returns_not_found(): void
+    {
+        $this->get(URL::signedRoute('registration.confirm', ['ticketId' => 'ANON-MISSING']))->assertNotFound();
+
+        $this->assertDatabaseCount('anonymous_registrations', 0);
     }
 
     /**

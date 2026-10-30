@@ -65,7 +65,7 @@
                            :aria-invalid="!!errors.email"
                            class="glass-input w-full px-4 py-3.5 rounded-2xl text-sm placeholder-gray-500 font-sans"
                            :class="errors.email ? 'border-red-500 ring-1 ring-red-500' : ''">
-                    <p id="email-help" class="text-xs text-gray-400">We will send your confirmation and ticket links to this address.</p>
+                    <p id="email-help" class="text-xs text-gray-400">We will send a link to this address. Click Confirm my Registration in the email to confirm your reservation.</p>
                     <p id="email-error" role="alert" class="text-xs text-red-400 font-mono" x-text="errors.email || ''">{{ $errors->first('email') }}</p>
                 </div>
 

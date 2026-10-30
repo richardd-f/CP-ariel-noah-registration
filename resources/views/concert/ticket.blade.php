@@ -57,6 +57,19 @@
         </div>
     </div>
 
+    <div role="status" class="w-full max-w-xl mx-auto mb-6 p-5 rounded-2xl bg-white/5 border border-white/10 z-10">
+        <h2 class="font-display text-xl font-bold text-white">
+            {{ $registration->confirmed_at ? 'Registration confirmed' : 'Awaiting email confirmation' }}
+        </h2>
+        <p class="mt-2 text-sm text-gray-300">
+            @if ($registration->confirmed_at)
+                Confirmed at {{ $registration->confirmed_at->toIso8601String() }}. Keep your ticket ID safe.
+            @else
+                Open the email sent during registration and click "Confirm my Registration" to confirm your reservation.
+            @endif
+        </p>
+    </div>
+
     <!-- Main Boarding Pass Container -->
     <div class="ticket-card relative w-full max-w-xl rounded-3xl glass-panel border border-white/20 shadow-[0_25px_90px_rgba(0,0,0,0.9)] overflow-hidden z-10">
         
@@ -66,10 +79,10 @@
         <!-- Ticket Header -->
         <div class="p-6 sm:p-8 bg-gradient-to-b from-[#0f0f18] to-[#08080f] border-b border-white/10 space-y-4">
             
-            <div class="flex items-start justify-between">
+            <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                 <div class="space-y-1">
                     <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded text-[10px] font-mono font-semibold tracking-wider bg-pink-500/10 text-pink-400 border border-pink-500/30">
-                        OFFICIAL ADMISSION TICKET
+                        {{ $registration->confirmed_at ? 'OFFICIAL ADMISSION TICKET' : 'REGISTRATION RECEIVED' }}
                     </span>
                     <h1 class="font-display text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
                         NOVA HORIZON 2026
@@ -79,10 +92,10 @@
                     </p>
                 </div>
 
-                <div class="text-right space-y-1">
+                <div class="text-left sm:text-right space-y-1">
                     <span class="text-[10px] font-mono text-gray-400 uppercase">TIER</span>
                     <div class="text-sm font-bold font-display text-cyan-400">VIP ANONYMOUS</div>
-                    <div class="text-[10px] font-mono text-emerald-400">FASTLANE VERIFIED</div>
+                    <div class="text-[10px] font-mono text-cyan-400">{{ $registration->confirmed_at ? 'CONFIRMED' : 'PENDING CONFIRMATION' }}</div>
                 </div>
             </div>
 
@@ -159,7 +172,11 @@
                         <span>Zero-Knowledge Scannable Code</span>
                     </div>
                     <p class="text-xs text-gray-400 max-w-xs leading-relaxed">
-                        Present this pass directly on your mobile device or printed sheet at Turnstile Alpha-09. No photo ID is needed.
+                        @if ($registration->confirmed_at)
+                            Present this pass directly on your mobile device or printed sheet at Turnstile Alpha-09. No photo ID is needed.
+                        @else
+                            Confirm your registration using the link in your email before presenting this pass for entry.
+                        @endif
                     </p>
                     <div class="text-[10px] text-gray-500 font-mono">
                         Issued: {{ $registration->formatted_timestamp }}
@@ -177,9 +194,9 @@
         </div>
 
         <!-- Ticket Footer Barcode Simulation -->
-        <div class="p-4 bg-[#050508] border-t border-white/10 flex items-center justify-between text-[10px] font-mono text-gray-500">
-            <span>SECURE HASH: {{ hash('sha256', $registration->anonymous_ticket_id . 'NOVA_2026') }}</span>
-            <span class="text-cyan-400">ANON-VALID</span>
+        <div class="p-4 bg-[#050508] border-t border-white/10 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between text-[10px] font-mono text-gray-500">
+            <span class="min-w-0 break-all">SECURE HASH: {{ hash('sha256', $registration->anonymous_ticket_id . 'NOVA_2026') }}</span>
+            <span class="shrink-0 text-cyan-400">{{ $registration->confirmed_at ? 'CONFIRMED' : 'PENDING' }}</span>
         </div>
 
     </div>
@@ -189,7 +206,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             const canvas = document.getElementById('ticket-qr');
             if (canvas && window.QRCode) {
-                const qrContent = "TICKET:{{ $registration->anonymous_ticket_id }}|EVENT:NOVA_HORIZON_2026|VENUE:CyberDome|STATUS:VALID";
+                const qrContent = "TICKET:{{ $registration->anonymous_ticket_id }}|EVENT:NOVA_HORIZON_2026|VENUE:CyberDome|STATUS:{{ $registration->confirmed_at ? 'CONFIRMED' : 'PENDING' }}";
                 window.QRCode.toCanvas(canvas, qrContent, {
                     width: 144,
                     margin: 1,

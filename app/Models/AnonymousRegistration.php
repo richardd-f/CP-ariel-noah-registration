@@ -41,6 +41,7 @@ class AnonymousRegistration extends Model
     protected $casts = [
         'favorite_genres' => 'array',
         'agreed_anonymous' => 'boolean',
+        'confirmed_at' => 'datetime',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];

@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="color-scheme" content="dark">
     <meta name="supported-color-schemes" content="dark">
-    <title>Your {{ $ticket['concert']['title'] }} ticket</title>
+    <title>Confirm your {{ $ticket['concert']['title'] }} registration</title>
     <style>
         :root { color-scheme: dark; supported-color-schemes: dark; }
         @media only screen and (max-width: 480px) {
@@ -17,7 +17,7 @@
     </style>
 </head>
 <body style="margin: 0; padding: 0; background-color: #030303; color: #f3f4f6; font-family: Arial, Helvetica, sans-serif;">
-    <div style="display: none; max-height: 0; overflow: hidden; mso-hide: all;">You're in. Your ticket {{ $ticket['ticket_id'] }} and QR pass are ready.</div>
+    <div style="display: none; max-height: 0; overflow: hidden; mso-hide: all;">One more step: confirm your registration {{ $ticket['ticket_id'] }} using the link in this email.</div>
     <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="#030303" style="background-color: #030303;">
         <tr>
             <td align="center" style="padding: 24px 12px;">
@@ -32,15 +32,15 @@
                                     <td align="center" style="padding-bottom: 20px;">
                                         <table role="presentation" width="80" cellspacing="0" cellpadding="0" border="0">
                                             <tr>
-                                                <td align="center" valign="middle" width="80" height="80" bgcolor="#073337" style="width: 80px; height: 80px; background-color: #073337; border: 1px solid #10d9aa; border-radius: 50%; color: #10d9aa; font-size: 44px; font-weight: bold; line-height: 80px;">&#10003;</td>
+                                                <td align="center" valign="middle" width="80" height="80" bgcolor="#073337" style="width: 80px; height: 80px; background-color: #073337; border: 1px solid #10d9aa; border-radius: 50%; color: #10d9aa; font-size: 44px; font-weight: bold; line-height: 80px;">&#9993;</td>
                                             </tr>
                                         </table>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td align="center">
-                                        <h1 style="margin: 0 0 8px; color: #ffffff; font-size: 32px; line-height: 38px; letter-spacing: -1px;">You're in.</h1>
-                                        <p style="margin: 0; color: #d1d5db; font-size: 14px; line-height: 22px;">Your reservation is confirmed.<br>Here is your anonymous concert pass.</p>
+                                        <h1 style="margin: 0 0 8px; color: #ffffff; font-size: 32px; line-height: 38px; letter-spacing: -1px;">One more step.</h1>
+                                        <p style="margin: 0; color: #d1d5db; font-size: 14px; line-height: 22px;">We received your registration.<br>Click Confirm my Registration below to confirm your reservation.</p>
                                     </td>
                                 </tr>
                                 <tr>
@@ -52,7 +52,7 @@
                                                         <tr>
                                                             <td style="padding-bottom: 12px; border-bottom: 1px solid #242429; color: #9ca3af; font-family: Consolas, 'Courier New', monospace; font-size: 11px;">ANONYMOUS PASS ID</td>
                                                             <td align="right" style="padding-bottom: 12px; border-bottom: 1px solid #242429;">
-                                                                <span style="display: inline-block; padding: 4px 7px; border: 1px solid #07515a; border-radius: 4px; background-color: #062026; color: #67e8f9; font-family: Consolas, 'Courier New', monospace; font-size: 11px;">&#9679; VALIDATED</span>
+                                                                <span style="display: inline-block; padding: 4px 7px; border: 1px solid #07515a; border-radius: 4px; background-color: #062026; color: #67e8f9; font-family: Consolas, 'Courier New', monospace; font-size: 11px;">&#9679; PENDING</span>
                                                             </td>
                                                         </tr>
                                                         <tr>
@@ -69,7 +69,7 @@
                                                                                 <tr>
                                                                                     <td align="center" style="padding: 10px 8px 12px;">
                                                                                         <img src="{{ $message->embedData($qrCode, 'ticket-qr.png', 'image/png') }}" width="168" height="168" alt="QR code for ticket {{ $ticket['ticket_id'] }}" style="display: block; width: 168px; height: 168px; border: 0;">
-                                                                                        <p style="margin: 6px 0 0; color: #1f2937; font-family: Consolas, 'Courier New', monospace; font-size: 11px; line-height: 16px;">Scan at<br>{{ $ticket['concert']['gate_code'] }}</p>
+                                                                                        <p style="margin: 6px 0 0; color: #1f2937; font-family: Consolas, 'Courier New', monospace; font-size: 11px; line-height: 16px;">Confirm before entry<br>{{ $ticket['concert']['gate_code'] }}</p>
                                                                                     </td>
                                                                                 </tr>
                                                                             </table>
@@ -103,7 +103,7 @@
                                                     <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
                                                         <tr>
                                                             <td align="center" bgcolor="#7c3aed" style="border: 1px solid #8b5cf6; border-radius: 10px; background: linear-gradient(90deg, #9333ea, #06b6d4); mso-padding-alt: 14px 12px;">
-                                                                <a href="{{ $ticket['download_url'] }}" style="display: block; padding: 14px 12px; color: #ffffff; font-size: 13px; font-weight: bold; line-height: 18px; text-decoration: none;">Download Ticket</a>
+                                                                <a href="{{ $confirmationUrl }}" style="display: block; padding: 14px 12px; color: #ffffff; font-size: 13px; font-weight: bold; line-height: 18px; text-decoration: none;">Confirm my Registration</a>
                                                             </td>
                                                         </tr>
                                                     </table>
@@ -112,7 +112,7 @@
                                                     <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
                                                         <tr>
                                                             <td align="center" bgcolor="#18181b" style="background-color: #18181b; border: 1px solid #35353d; border-radius: 10px; mso-padding-alt: 14px 12px;">
-                                                                <a href="{{ $ticket['view_url'] }}" style="display: block; padding: 14px 12px; color: #e5e7eb; font-size: 13px; font-weight: bold; line-height: 18px; text-decoration: none;">View Ticket</a>
+                                                                <a href="{{ $ticket['view_url'] }}" style="display: block; padding: 14px 12px; color: #e5e7eb; font-size: 13px; font-weight: bold; line-height: 18px; text-decoration: none;">View Registration</a>
                                                             </td>
                                                         </tr>
                                                     </table>
@@ -143,7 +143,7 @@
                                 </tr>
                                 <tr>
                                     <td align="center" style="padding-top: 20px;">
-                                        <p style="margin: 0; color: #9ca3af; font-family: Consolas, 'Courier New', monospace; font-size: 11px; line-height: 18px;">Keep your ticket ID safe. Your email address is not saved with your registration.</p>
+                                        <p style="margin: 0; color: #9ca3af; font-family: Consolas, 'Courier New', monospace; font-size: 11px; line-height: 18px;">Your registration stays pending until you click Confirm my Registration. Keep this email private. Your email address is not saved with your registration.</p>
                                     </td>
                                 </tr>
                             </table>

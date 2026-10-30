@@ -81,16 +81,16 @@
 
                     <div class="space-y-2">
                         <h3 class="font-display text-xl font-bold text-white group-hover:text-pink-300 transition-colors">
-                            Instant Confirmation
+                            Email Confirmation
                         </h3>
                         <p class="text-sm text-gray-400 leading-relaxed">
-                            Receive your ticket after submitting and a confirmation by email. Save your ticket ID and QR pass directly to your device.
+                            Submit your registration, then click Confirm my Registration in your email. Your ticket page shows when your registration is confirmed.
                         </p>
                     </div>
                 </div>
 
                 <div class="pt-6 border-t border-white/5 flex items-center justify-between text-xs font-mono text-pink-300/80">
-                    <span>LATENCY: INSTANT TOKEN</span>
+                    <span>STATUS: CONFIRM BY EMAIL</span>
                     <i data-lucide="ticket" class="w-4 h-4 text-pink-400"></i>
                 </div>
             </div>

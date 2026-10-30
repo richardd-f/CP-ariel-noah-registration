@@ -40,7 +40,7 @@
         <!-- Headline & Subtitle -->
         <div class="space-y-2">
             <h3 id="success-modal-title" class="font-display text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
-                You're in.
+                Check your email.
             </h3>
             <p class="text-sm sm:text-base text-gray-300" role="status" x-text="successMessage || 'Your reservation has been received.'">
                 Your reservation has been received.
@@ -54,7 +54,7 @@
                 <span class="text-xs font-mono text-gray-400">ANONYMOUS PASS ID</span>
                 <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[11px] font-mono text-cyan-300 bg-cyan-500/10 border border-cyan-500/20">
                     <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
-                    VALIDATED
+                    PENDING
                 </span>
             </div>
 
@@ -81,7 +81,7 @@
                     <template x-if="qrDataUrl">
                         <img :src="qrDataUrl" alt="Anonymous Ticket QR Code" class="w-36 h-36 object-contain">
                     </template>
-                    <span class="text-[10px] font-mono text-gray-800 mt-1">Scan at Gate Alpha-09</span>
+                    <span class="text-[10px] font-mono text-gray-800 mt-1">Awaiting email confirmation</span>
                 </div>
 
                 <!-- Event Details Snapshot -->
@@ -118,7 +118,7 @@
                 <span class="absolute inset-0 bg-gradient-to-r from-purple-600 to-cyan-500 group-hover:scale-105 transition-transform"></span>
                 <span class="relative flex items-center justify-center gap-2">
                     <i data-lucide="download" class="w-4 h-4"></i>
-                    <span>Download Ticket</span>
+                    <span>View Registration</span>
                 </span>
             </button>
 

@@ -8,6 +8,7 @@ use App\Models\AnonymousRegistration;
 use App\Services\TicketService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\View\View;
 use Throwable;
@@ -87,8 +88,8 @@ class RegistrationController extends Controller
         }
 
         $message = $emailSent
-            ? 'Your reservation is confirmed. A confirmation email has been sent. Please check your inbox or spam folder.'
-            : 'Your reservation is confirmed, but we could not send the confirmation email. Please save your ticket now.';
+            ? 'Your registration has been received and is awaiting confirmation. Please check your inbox or spam folder and click "Confirm my Registration" in the email.'
+            : 'Your registration has been saved, but we could not send the confirmation email. It remains unconfirmed. Please save your ticket ID and contact the organizer.';
 
         if ($request->expectsJson() || $request->ajax()) {
             return response()->json([
@@ -102,6 +103,19 @@ class RegistrationController extends Controller
         return redirect()->route('home', ['#success'])
             ->with('success_ticket', $ticketPayload)
             ->with('success_message', $message);
+    }
+
+    public function confirm(Request $request, string $ticketId): RedirectResponse
+    {
+        $registration = AnonymousRegistration::where('anonymous_ticket_id', $ticketId)->firstOrFail();
+
+        if ($request->isMethod('GET')) {
+            AnonymousRegistration::whereKey($registration->id)
+                ->whereNull('confirmed_at')
+                ->update(['confirmed_at' => now()]);
+        }
+
+        return redirect()->route('ticket.show', $ticketId);
     }
 
     /**

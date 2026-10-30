@@ -8,6 +8,7 @@ use Endroid\QrCode\Writer\PngWriter;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
+use Illuminate\Support\Facades\URL;
 
 class RegistrationConfirmation extends Mailable
 {
@@ -23,7 +24,7 @@ class RegistrationConfirmation extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: $this->ticket['concert']['title'].' - Registration Confirmation',
+            subject: $this->ticket['concert']['title'].' - Confirm your Registration',
         );
     }
 
@@ -36,8 +37,10 @@ class RegistrationConfirmation extends Mailable
             view: 'emails.registration-confirmation',
             text: 'emails.registration-confirmation-text',
             with: [
+                'confirmationUrl' => URL::signedRoute('registration.confirm', ['ticketId' => $this->ticket['ticket_id']]),
                 'registrationRows' => [
                     'Ticket ID' => $this->ticket['ticket_id'],
+                    'Registration status' => 'Awaiting email confirmation',
                     'Registered at' => $this->registrationDetails['registered_at'],
                     'Email address' => $this->registrationDetails['email'],
                     'Alias / nickname' => $this->registrationDetails['nickname'] ?? 'Not provided',
