@@ -14,7 +14,7 @@
 
             <!-- Main Headline -->
             <h1 class="font-display text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight leading-[1.08] text-white">
-                Experience The Night <br class="hidden sm:inline">
+                Embrace The Night <br class="hidden sm:inline">
                 <span class="text-neon-gradient">Beyond Music</span>
             </h1>
 
