@@ -79,9 +79,6 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_KEY }}
           password: ${{ secrets.SSH_PASSWORD }}
-          passphrase: ${{ secrets.SSH_PASSPHRASE }}
-          port: ${{ secrets.SSH_PORT || '22' }}
-          fingerprint: ${{ secrets.SSH_FINGERPRINT }}
           command_timeout: 20m
           envs: DEPLOY_SHA
           script: |
